@@ -14,10 +14,8 @@ import time
 import random
 #PIL is the photo manager
 from PIL import ImageTk,  Image
-
-
 #import sys
-#import os
+import os
 #if os.environ.get('DISPLAY','') == '':
 #    print('no display found. Using :0.0')
 #    os.environ.__setitem__('DISPLAY', ':0.0')
@@ -50,6 +48,7 @@ def rightButtonAction():
         global imageNumber
         imageNumber = (imageNumber + 1)%5
         print(imageNumber)
+    
 
 inactive = 0
 
@@ -74,6 +73,14 @@ dialogWindow.configure(bg='white')
 c = Canvas(dialogWindow, height=470, width=300, bg='white')
 c.pack(expand=YES, fill=BOTH)
 
+#Finds the name of the directory where removable drives are stored and returns the file path.
+#Would be better to do this with a function like os.listmounts() but that doesn't work in Unix. Will work as long as file structure is maintained between systems
+def findDrivePath():
+    directory = "/media/pi/"
+    subs = os.listdir(directory)
+    directory += subs[0] + "/"
+    return directory
+    
 while True:
     buttonLED.pulse()
 
@@ -164,7 +171,8 @@ while True:
             words = c.create_text(225, 60, text = "View/download from our website! (in a day or so)" )
             words = c.create_text(225, 80, text = "https://stasevichlab.colostate.edu/shadow-scope/videos.html")
             timestr = time.strftime("%Y%m%d-%H%M%S")
-            camera.start_recording("/home/pi/Desktop/ShadowScopeVideos/" + str(id) + '_shadow_scope1.h264')
+            directory = findDrivePath()
+            camera.start_recording(directory + str(id) + '_shadow_scope1.h264')
             #camera.annotate_text = "Date stamp"
             camera.wait_recording(10)
             camera.stop_recording()
@@ -193,3 +201,4 @@ while True:
 # camera.capture('/home/pi/Pictures/%s.jpg' % photonumber);
 # print("photo taken");
 # photonumber = photonumber + 1
+
